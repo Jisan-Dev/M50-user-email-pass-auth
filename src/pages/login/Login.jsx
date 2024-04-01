@@ -1,16 +1,22 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useState } from 'react';
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { useRef, useState } from 'react';
 import auth from '../../firebase/firebase.config';
 
 const Login = () => {
   const [isPassVisible, setIsPassVisible] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [success, setSuccess] = useState('');
+  const emailRef = useRef(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
+
+    // reset error message
+    setLoginError('');
+    // reset success message
+    setSuccess('');
 
     signInWithEmailAndPassword(auth, email, password)
       .then((result) => {
@@ -19,6 +25,28 @@ const Login = () => {
       })
       .catch((error) => {
         console.log(error);
+        setLoginError(error.message);
+      });
+  };
+
+  const handleForgotPassword = () => {
+    const email = emailRef.current.value;
+
+    if (!email) {
+      setLoginError('Please enter an email');
+      return;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setLoginError('Please write a valid email');
+      return;
+    }
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        console.log('logged in');
+        setSuccess('password reset email sent');
+      })
+      .catch((error) => {
+        console.log(error.message);
         setLoginError(error.message);
       });
   };
@@ -32,7 +60,7 @@ const Login = () => {
             <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
             <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
           </svg>
-          <input type="email" name="email" className="grow" placeholder="Email" required />
+          <input type="email" ref={emailRef} name="email" className="grow" placeholder="Email" required />
         </label>
         <label className="input input-bordered flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70">
@@ -47,6 +75,9 @@ const Login = () => {
             {isPassVisible ? 'hide' : 'show'}
           </small>
         </label>
+        <p onClick={handleForgotPassword} className="link link-hover">
+          Forgot password?
+        </p>
         <div className="flex justify-center">
           <input type="submit" value="Login" className="btn btn-outline btn-primary w-full" />
           {/* <button className="btn btn-outline btn-primary w-full">Register</button> */}
