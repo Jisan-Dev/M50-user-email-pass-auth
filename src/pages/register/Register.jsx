@@ -11,9 +11,6 @@ const Register = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
     const name = e.target.name.value;
-    console.log('email: ', email);
-    console.log('name: ', name);
-    console.log('password: ', password);
 
     // reset error message
     setRegisterError('');
@@ -22,6 +19,9 @@ const Register = () => {
 
     if (password.length < 6) {
       setRegisterError('Password must be at least 6 characters');
+      return;
+    } else if (!/[A-Z]/.test(password)) {
+      setRegisterError('Password must contain at least one uppercase letter');
       return;
     }
 
