@@ -5,11 +5,13 @@ import { useState } from 'react';
 const Register = () => {
   const [registerError, setRegisterError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isPassVisible, setIsPassVisible] = useState(false);
 
   const handleRegister = (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
+    const isTermsAccepted = e.target.terms.checked;
     const name = e.target.name.value;
 
     // reset error message
@@ -22,6 +24,9 @@ const Register = () => {
       return;
     } else if (!/[A-Z]/.test(password)) {
       setRegisterError('Password must contain at least one uppercase letter');
+      return;
+    } else if (!isTermsAccepted) {
+      setRegisterError('You must accept the terms and conditions');
       return;
     }
 
@@ -57,7 +62,14 @@ const Register = () => {
               clipRule="evenodd"
             />
           </svg>
-          <input type="password" className="grow" name="password" placeholder="password" required />
+          <input type={isPassVisible ? 'text' : 'password'} className="grow" name="password" placeholder="password" required />
+          <small onClick={() => setIsPassVisible(!isPassVisible)} className="cursor-pointer hover:text-primary select-none">
+            {isPassVisible ? 'hide' : 'show'}
+          </small>
+        </label>
+        <input type="checkbox" name="terms" id="terms" />
+        <label htmlFor="terms" className="ml-2">
+          Our Terms & Conditions
         </label>
         <div className="flex justify-center">
           <input type="submit" value="Register" className="btn btn-outline btn-primary w-full" />
