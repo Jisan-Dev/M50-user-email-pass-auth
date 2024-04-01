@@ -4,6 +4,8 @@ import auth from '../../firebase/firebase.config';
 
 const Login = () => {
   const [isPassVisible, setIsPassVisible] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -11,8 +13,14 @@ const Login = () => {
     const password = e.target.password.value;
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((result) => console.log(result.user))
-      .catch((error) => console.log(error.message));
+      .then((result) => {
+        console.log(result.user);
+        setSuccess('user logged in successfully');
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoginError(error.message);
+      });
   };
 
   return (
@@ -44,6 +52,8 @@ const Login = () => {
           {/* <button className="btn btn-outline btn-primary w-full">Register</button> */}
         </div>
       </form>
+      {loginError && <p className="text-red-400 text-center"> {loginError} </p>}
+      {success && <p className="text-green-400 text-center"> {success} </p>}
     </div>
   );
 };
