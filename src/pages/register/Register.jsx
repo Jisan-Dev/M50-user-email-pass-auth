@@ -1,9 +1,36 @@
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import auth from '../../firebase/firebase.config';
+import { useState } from 'react';
+
 const Register = () => {
+  const [registerError, setRegisterError] = useState('');
+  const [success, setSuccess] = useState('');
+
   const handleRegister = (e) => {
     e.preventDefault();
-    console.log('email: ', e.target.email.value);
-    console.log('name: ', e.target.name.value);
-    console.log('password: ', e.target.password.value);
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    const name = e.target.name.value;
+    console.log('email: ', email);
+    console.log('name: ', name);
+    console.log('password: ', password);
+
+    // reset error message
+    setRegisterError('');
+    // reset success message
+    setSuccess('');
+
+    if (password.length < 6) {
+      setRegisterError('Password must be at least 6 characters');
+      return;
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredentials) => {
+        console.log(userCredentials.user);
+        setSuccess('user created successfully');
+      })
+      .catch((error) => setRegisterError(error.message));
   };
   return (
     <div>
@@ -14,7 +41,7 @@ const Register = () => {
             <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
             <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
           </svg>
-          <input type="email" name="email" className="grow" placeholder="Email" />
+          <input type="email" name="email" className="grow" placeholder="Email" required />
         </label>
         <label className="input input-bordered flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70">
@@ -30,13 +57,15 @@ const Register = () => {
               clipRule="evenodd"
             />
           </svg>
-          <input type="password" className="grow" name="password" placeholder="password" />
+          <input type="password" className="grow" name="password" placeholder="password" required />
         </label>
         <div className="flex justify-center">
           <input type="submit" value="Register" className="btn btn-outline btn-primary w-full" />
           {/* <button className="btn btn-outline btn-primary w-full">Register</button> */}
         </div>
       </form>
+      {registerError && <p className="text-red-400 text-center"> {registerError} </p>}
+      {success && <p className="text-green-400 text-center"> {success} </p>}
     </div>
   );
 };
