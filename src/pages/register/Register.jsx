@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import auth from '../../firebase/firebase.config';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
   const [registerError, setRegisterError] = useState('');
@@ -87,6 +88,12 @@ const Register = () => {
       </form>
       {registerError && <p className="text-red-400 text-center"> {registerError} </p>}
       {success && <p className="text-green-400 text-center"> {success} </p>}
+      <p className="text-center text-sm">
+        Already have an account? Please{' '}
+        <Link to="/login" className="underline hover:text-primary">
+          Login
+        </Link>
+      </p>
     </div>
   );
 };

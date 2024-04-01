@@ -1,6 +1,7 @@
 import { sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import { useRef, useState } from 'react';
 import auth from '../../firebase/firebase.config';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [isPassVisible, setIsPassVisible] = useState(false);
@@ -88,6 +89,12 @@ const Login = () => {
       </form>
       {loginError && <p className="text-red-400 text-center"> {loginError} </p>}
       {success && <p className="text-green-400 text-center"> {success} </p>}
+      <p className="text-center text-sm">
+        Doesn&apos;t have any account? Please{' '}
+        <Link to="/register" className="underline hover:text-primary">
+          Register
+        </Link>
+      </p>
     </div>
   );
 };
